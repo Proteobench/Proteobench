@@ -9,6 +9,12 @@ def prepare_df(
             contaminant_flag,
             min_count_multispec
         ):
+    
+    for k,v in mapper.items():
+        print(k,v)
+        if k not in df.columns:
+            raise ImportError(f'Column "{k}" not found in the input file. Please check file and selected search engine.')
+    
     df.rename(columns=mapper,inplace=True)
 
     replicate_to_raw = {}
