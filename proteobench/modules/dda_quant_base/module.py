@@ -1,14 +1,9 @@
 from __future__ import annotations
 
-import datetime
-import hashlib
 import logging
 import os
-from collections import ChainMap
-from dataclasses import asdict
 from tempfile import TemporaryDirectory
 
-import numpy as np
 import pandas as pd
 import streamlit as st
 from pandas import DataFrame
@@ -36,6 +31,7 @@ class Module:
     """Object is used as a main interface with the Proteobench library within the module."""
 
     def __init__(self):
+        self.parse_settings_builder = ParseSettingsBuilder()
         self.dda_quant_results_repo = DDA_QUANT_RESULTS_REPO
         self.precursor_name = PRECURSOR_NAME
 
@@ -50,6 +46,9 @@ class Module:
         "Sage": extract_params_sage,
         "FragPipe": extract_params_fragger,
     }
+
+    def get_input_formats(self):
+        return self.parse_settings_builder.INPUT_FORMATS
 
     def add_current_data_point(self, all_datapoints, current_datapoint):
         """Add current data point to all data points and load them from file if empty. TODO: Not clear why is the df transposed here."""
@@ -82,7 +81,7 @@ class Module:
 
         # Parse user config
         input_df = load_input_file(input_file, input_format)
-        parse_settings = ParseSettingsBuilder().build_parser(input_format)
+        parse_settings = self.parse_settings_builder.build_parser(input_format)
 
         standard_format, replicate_to_raw = parse_settings.convert_to_standard_format(input_df)
 
