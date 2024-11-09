@@ -4,6 +4,7 @@
 "Proteins" = "Proteins"
 "Modified sequence" = "Modified sequence"
 "Charge" = "Charge"
+"Q-value" = "Q Value"
 
 [condition_mapper]
 "LFQ_Orbitrap_AIF_Condition_A_Sample_Alpha_01" = "A"

@@ -2,6 +2,7 @@
 "Peptide Sequence" = "Sequence"
 "Protein" = "Proteins" # For FragPipe outputs, we combine the values in "Proteins" and "Mapped Proteins"
 "Charge" = "Charge"
+"Q.Value" = "Q Value"
 
 [condition_mapper]
 "LFQ_Orbitrap_AIF_Condition_A_Sample_Alpha_01 Intensity" = "A"

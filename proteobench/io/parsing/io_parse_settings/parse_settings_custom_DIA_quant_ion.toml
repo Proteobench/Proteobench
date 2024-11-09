@@ -3,6 +3,7 @@
 "Sequence" = "Sequence"
 "Charge" = "Charge"
 "Modified sequence" = "Modified sequence"
+"Q Value" = "Q Value"
 
 
 [condition_mapper]

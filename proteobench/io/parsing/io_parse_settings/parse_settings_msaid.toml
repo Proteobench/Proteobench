@@ -4,6 +4,7 @@
 "PRECURSOR_CHARGE" = "Charge"
 "QUANTIFICATION" = "Intensity"
 "FASTA_HEADERS" = "Proteins"
+"Q_VALUE" = "Q Value"
 
 [condition_mapper]
 "LFQ_Orbitrap_AIF_Condition_A_Sample_Alpha_01.raw" = "A"

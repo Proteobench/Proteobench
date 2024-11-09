@@ -17,7 +17,7 @@ class QuantScores:
     ) -> pd.DataFrame:
         # select columns which are relavant for the statistics
         # TODO, this should be handled different, probably in the parse settings
-        relevant_columns_df = filtered_df[["Raw file", self.precursor_name, "Intensity"]].copy()
+        relevant_columns_df = filtered_df[["Raw file", self.precursor_name, "Intensity", "Q Value"]].copy()
         replicate_to_raw_df = QuantScores.convert_replicate_to_raw(replicate_to_raw)
 
         # add column "Group" to filtered_df_p1 using inner join on "Raw file"
@@ -28,6 +28,7 @@ class QuantScores:
             min_intensity=0,
             precursor=self.precursor_name,
         )
+        # print(quant_df.columns)
 
         species_prec_ion = list(self.species_dict.values())
         species_prec_ion.append(self.precursor_name)
@@ -59,10 +60,15 @@ class QuantScores:
         # TODO: check if this is still needed
         # sum intensity values of the same precursor and "Raw file" using the sum
         quant_raw_df_int = (
-            relevant_columns_df.groupby([precursor, "Raw file", "Group"])["Intensity"]
-            .agg(Intensity="sum", Count="size")
+            relevant_columns_df.groupby([precursor, "Raw file", "Group"])[["Intensity", "Q Value"]] # TODO: also aggregate Q Value into a list, or a mean?
+            .agg({
+                "Intensity": "sum",
+                "Q Value": "mean",
+            })
             .reset_index()
         )
+        quant_raw_df_int["Count"] = relevant_columns_df.groupby([precursor, "Raw file", "Group"]).size().values
+        print(quant_raw_df_int.columns)
 
         # add column "log_Intensity" to quant_raw_df
         quant_raw_df_int["log_Intensity"] = np.log2(quant_raw_df_int["Intensity"])
@@ -70,7 +76,7 @@ class QuantScores:
         # compute the mean of the log_Intensity per precursor and "Group"
         quant_raw_df_count = (quant_raw_df_int.groupby([precursor])).agg(nr_observed=("Raw file", "size"))
 
-        # pivot filtered_df_p1 to wide where index peptide ion, columns Raw file and values Intensity
+        # pivot quant_raw_df_int to wide where index peptide ion, columns Raw file and values Intensity
 
         intensities_wide = quant_raw_df_int.pivot(index=precursor, columns="Raw file", values="Intensity").reset_index()
 
@@ -83,6 +89,7 @@ class QuantScores:
                 Intensity_std=("Intensity", "std"),
                 Sum=("Intensity", "sum"),
                 nr_obs_group=("Intensity", "size"),
+                Q_value_mean=("Q Value", "mean"),
             )
             .reset_index()
         )
@@ -99,6 +106,7 @@ class QuantScores:
                 "Intensity_mean",
                 "Intensity_std",
                 "CV",
+                "Q_value_mean",
             ],
         ).reset_index()
 
